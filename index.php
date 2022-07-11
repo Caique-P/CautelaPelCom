@@ -12,14 +12,14 @@
     include './Incluidos/cabecalho.php';
     require './incluidos/db_connection.php';
     require './cautelar.php';
-        
+
     ini_set('display_errors','Off');
     $hourMin = date('H:i');
-    date_default_timezone_set('America/Sao_Paulo'); 
+    date_default_timezone_set('America/Sao_Paulo');
     echo "<center><table>";
     $resultado = mysqli_query($db_connection, "select * from cautela");
      //IMPRIME A TABELA DE CAUTELA E DESCAUTELA
-    echo"<th>Data da cautela</th><th>Graduação</th><th>Nome</th><th>Quantidade</th><th>Item</th><th>Série</th><th>Obs</th><th>Assinatura</th><th>Data da descautela</th>";
+    echo"<th>Data da cautela</th><th>Graduação</th><th>Nome</th><th>Quantidade</th><th>Item</th><th>Série</th><th>Obs</th><th>Militar</th><th>Data da descautela</th>";
 
     while($cautela = mysqli_fetch_assoc($resultado)) {
         echo "<tr><td>
@@ -46,7 +46,7 @@
         </tr></td>";
         }
         else{
-            
+
             echo"<td colspan='2'>
             <form method='post' action='./descautela.php'>
             <input type='hidden'  name='id' value='".$cautela["id"]."' id='dado' readonly/>
@@ -60,27 +60,49 @@
     //Imprime pra colocar um novo dado
     echo "<form method='post' action='#'><tr>
         <td>
-        <input type='text' name='data' maxlength='10' value='".$today."' id='dado'></td><td>
-        <select name='grad'  id='dado'>
-        <option value='SD'>SD</option>
-        <option value='CB'>CB</option>
-        <option value='SGT'>SGT</option>
-        <option value='TEN'>TEN</option>
-        <option value='CAP'>CAP</option>
-        </td><td>
-        <input type='text' name='nome' id='dado' required>
+        <input type='text' name='data' maxlength='10' value='".$today."' id='dado'></td><td colspan='2'>
+
+        <select name='nome' id='dado'>";
+
+        //<input type='text' name='nome' id='dado' required>
+
+        $resultado = mysqli_query($db_connection, "select * from armeiro");
+        while($armeiro = mysqli_fetch_assoc($resultado)) {
+            echo "
+            <option value='".$armeiro["nome"]."'>".$armeiro["grad"]." ".$armeiro["nome"]."</option>";
+          }
+
+        echo"</select>
         </select></td><td>
         <input type='number' min='1' value='1'name='quantidade' id='dado' required></td><td>
-        <input type='text' name='item' id='dado' required></td><td>
-        <input type='text' name='serie' id='dado'></td><td>
+        <select name='item' id='dado' required>
+        ";
+
+        $resultado = mysqli_query($db_connection, "select * from itens");
+        while($item = mysqli_fetch_assoc($resultado)) {
+            echo "
+            <option value='".$item["nome"]."'>".$item["nome"]."</option>";
+          }
+
+        echo"</select></td><td>
+        <select name='serie' id='dado'>
+        ";
+
+        $resultado = mysqli_query($db_connection, "select * from serie");
+        while($serie = mysqli_fetch_assoc($resultado)) {
+            echo "
+            <option value='".$serie["nserie"]."'>".$serie["nserie"]."</option>";
+          }
+
+        echo"</select></td><td>
         <input type='text' name='obs' id='dado'></td>
-        
+
         <!---<td>
         <input type='text' name='ass' id='dado'></td><td>
         <input type='text' name='dataDesc' id='dado'></td>---><td colspan='2'>
         <input style='background:lightgreen'type='submit' value='Cautelar' id='dado'/></form></td></tr>";
     echo "</table></center>";
     echo ' <div id="hora">Consulta realizada as '.$hourMin.' horas. </div>';
-    
+
 ?>
 </html>
