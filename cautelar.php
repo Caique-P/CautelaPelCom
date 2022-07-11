@@ -1,8 +1,10 @@
 <!---ALTERADOR DE USUARIOS:--->
 <?php
 // CHECA OS ESPAÇOS EM BRANCOS:
-if(isset(($_POST['grad'])) && isset(($_POST['nome'])) && isset(($_POST['quantidade'])) && isset(($_POST['item']))){
-  if(!empty(($_POST['grad'])) || !empty(($_POST['nome'])) || !empty(($_POST['quantidade'])) || !empty(($_POST['item']))){
+
+    ini_set('display_errors','Off');
+if( isset(($_POST['nome'])) && isset(($_POST['quantidade'])) && isset(($_POST['item']))){
+  if(!empty(($_POST['nome'])) || !empty(($_POST['quantidade'])) || !empty(($_POST['item']))){
     @session_start();
     if(empty(($_POST['obs']))){
       $DataObs = "-";
@@ -21,7 +23,10 @@ if(isset(($_POST['grad'])) && isset(($_POST['nome'])) && isset(($_POST['quantida
     }else{
       $DataSerie = $_POST['serie'];
     }
-    mysqli_query($db_connection, "INSERT INTO `cautela`(`data`, `grad`, `nome`, `quantidade`, `item`, `serie`, `obs`, `assinatura`, `dataDescautela`) VALUES ('".$_POST['data']."','".$_POST['grad']."','".$_POST['nome']."','".$_POST['quantidade']."','".$_POST['item']."','".$DataSerie."','".$DataObs."','".$_POST['ass']."','".$_POST['dataDesc']."')");
+    $grad = mysqli_query($db_connection, "SELECT `grad` FROM `armeiro` WHERE `nome` = '".$_POST['nome']."'");
+
+    $gradresult = $grad->fetch_array()[0] ?? '';
+    mysqli_query($db_connection, "INSERT INTO `cautela`(`data`, `grad`, `nome`, `quantidade`, `item`, `serie`, `obs`, `assinatura`, `dataDescautela`) VALUES ('".$_POST['data']."','".$gradresult."','".$_POST['nome']."','".$_POST['quantidade']."','".$_POST['item']."','".$DataSerie."','".$DataObs."','".$_POST['ass']."','".$_POST['dataDesc']."')");
     if(!empty($error_message)){
       echo '<center><div id="sumir">'.$error_message."</div></center>";
     }
